@@ -1,0 +1,65 @@
+.contenedor{
+    max-width: 70vw;
+    padding: 50px 0;
+    margin: auto;
+}
+
+img{
+    max-width: 60px;
+    height: auto;
+}
+
+.titulo_carga{
+    padding: 10px;
+}
+
+#productos{
+    margin-top: 10px;
+    padding: 10px 25px;
+}
+
+#msg{
+    margin: 1rem 0;
+}
+
+.boxMensajes{
+    
+    display: inline-block;
+    margin: 0;
+}
+.mailMensaje{
+    
+    font-weight: bold;
+    color: blue;
+}
+
+.fechaMensaje{
+    
+    display: inline-block;
+    color: brown;
+}
+
+.txtMensaje{
+    
+    display: inline-block;
+    font-style: italic;
+    color: green;
+}
+
+.usuario{
+    text-align: right;
+}
+
+.txt_logout{
+    text-align: center;
+}
+
+.logout{
+    text-decoration: none;
+    margin: 0 0 10px;
+}
+
+.logout_container{
+    margin-top: 50px;
+    max-width: 40%;
+}
