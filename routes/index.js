@@ -4,7 +4,7 @@ const ruta = Router();
 import {persiste, leedata} from '../utils/util.js'
 const productos=leedata('./data/prod2.json')
 
-import prodsFake from "../productosFake.js";
+import prodsFake from "../utils/productosFake.js";
 
 
 ruta.post("/login", (req, res) => {
