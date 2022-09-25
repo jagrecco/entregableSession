@@ -1,23 +1,31 @@
-const express = require("express");
-const { Server: HttpServer } = require("http");
-const { Server: IOServer } = require("socket.io");
+import express from 'express'
+import { Server as HttpServer } from "http";
+import { Server as IOServer } from "socket.io";
 
-const auth = require("./auth.js")
+import session from "express-session";
+import cookieParser from "cookie-parser";
+import MongoStore from "connect-mongo";
 
-const session = require("express-session");
-const cookieParser = require("cookie-parser");
-const MongoStore = require("connect-mongo");
+import {persiste, leedata} from './utils/util.js'
 
-const prodsFake = require("./productosFake.js")
-const p = require("./public/prod2.json")
-const mensajes = [];
-const productos = p;
+import ruta from "./routes/index.js";
+
+import { config } from 'dotenv';
+config()
+
+const port = process.env.PORT || 8080
+const mongo= process.env.MONGO
+
+let productos=[]
+let mensajes=[]
+
+leedata('./data/prod2.json').then((result) => {productos=result})
+leedata('./data/mensajes.json').then((result) => {mensajes=result})
 
 const app = express();
 const httpServer = new HttpServer(app);
 
 const io = new IOServer(httpServer);
-
 
 app.set('views', './public');
 app.set('view engine', 'ejs');
@@ -31,79 +39,33 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser());
 app.use(
   session({
-    store: new MongoStore({ mongoUrl: "mongodb+srv://jag:cxDM9ysG6pVp8Szi@clustertest0.k6leblk.mongodb.net/?retryWrites=true&w=majority" }),
+    store: new MongoStore({ mongoUrl: mongo }),
+
     secret: "coderhouse",
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: 600000 },
   })
-);
-
-
-app.post("/login", (req, res) => {
+  );
   
-  const { username } = req.body;
-  
-  if (username == '') {
-    return res.redirect('/')
-  }
-  req.session.user = username;
-  res.redirect('/productos')
-  
-});
+app.use("/", ruta)
 
-app.get("/logout", (req, res) => {
-  const usuario=req.session.user
-  req.session.destroy((err) => {
-    if (!err) res.render('logout', {usuario})
-    else res.send("Error");
-  });
-});
-
-app.get("/", (req, res) => {
-  
-  res.render('index.html', {productos});
-
-});
-
-app.get('/productos', (req, res) => {
-  const usuario=req.session.user
-  
-  if (!usuario) {return res.redirect('/')}
-  res.render('index', {productos, usuario});
-
-})
-
-app.get('/api/productos-test', (req, res)=>{
-  
-  res.render('tablaFake', {prodsFake})
-  
-})
-
-app.post('/productos', (req, res) => {
-  productos.push(req.body)
-
-})
-
-httpServer.listen(8080, () => console.log("SERVER ON: Puerto 8080")); 
+httpServer.listen(port, () => console.log(`SERVER ON: Puerto ${port}`));
 
 // Servidor
 io.on("connection", (socket) => {
 
   console.log("¡Nuevo cliente conectado!");
-
   socket.emit("mensajes", mensajes);
-
   socket.emit("productos", productos);
 
   socket.on("mensaje", (data) => {
-
     mensajes.push(data)
+    persiste('./data/mensajes.json', mensajes)
     io.sockets.emit("mensajes", mensajes);
   });
 
   socket.on("producto", (prod) => {
-
     productos.push(prod)
     io.sockets.emit("productos", productos);
 

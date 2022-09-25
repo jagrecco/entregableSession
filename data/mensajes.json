@@ -1,0 +1,22 @@
+[
+  {
+    "mail": "tutu@coder.com",
+    "msg": "Mensaje de Tutu",
+    "date": 1660171548073
+  },
+  {
+    "mail": "pepe@coder.com",
+    "msg": "Mensaje de Pepe",
+    "date": 1660171548073
+  },
+  {
+    "mail": "jag@coder.com",
+    "msg": "Mensaje de jag",
+    "date": 1660171548073
+  },
+  {
+    "mail": "ana@coder",
+    "msg": "Hola! Soy Ana",
+    "date": "25/09/2022 15:53:12"
+  }
+]
