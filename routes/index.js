@@ -1,20 +1,64 @@
+import User from "../models/User.js";
+import bcrypt from "bcrypt";
+import passport from "passport";
+import { Strategy } from "passport-local";
+const LocalStrategy = Strategy;
+
 import { Router } from "express";
 const ruta = Router();
 
+/* ruta.use(passport.initialize());
+ruta.use(passport.session()); */
+
+passport.use(
+  new LocalStrategy((mail, password, done) => {
+    User.findOne({ mail }, (err, mail) => {
+      if (err) console.log(err);
+      if (!mail) {
+        console.log(mail)
+        return done(null, false)
+      };
+      bcrypt.compare(password, user.password, (err, isMatch) => {
+        if (err) console.log(err);
+        if (isMatch) return done(null, user);
+        return done(null, false);
+      });
+    });
+  })
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findById(id);
+  done(null, user);
+});
+
+/* import mongoose from "mongoose"; */
+
+/* import { config } from 'dotenv';
+config()
+const mongoUsuario=process.env.MONGOUSER
+
+mongoose
+  .connect(mongoUsuario)
+  .then(() => console.log(`${mongoUsuario} connectada`))
+  .catch((err) => console.log(err)); */
+
+
+
 import {persiste, leedata} from '../utils/util.js'
 const productos=leedata('./data/prod2.json')
-
 import prodsFake from "../utils/productosFake.js";
 
 
-ruta.post("/login", (req, res) => {
+ruta.post("/login", passport.authenticate("local", { failureRedirect: "index.html" }), (req, res) => {
   
-  const { username } = req.body;
-  
-  if (username == '') {
-    return res.redirect('/')
-  }
-  req.session.user = username;
+  const { mail, password } = req.body;
+    
+  req.session.user = mail;
   res.redirect('/productos')
   
 });
@@ -52,5 +96,31 @@ ruta.post('/productos', (req, res) => {
 
 })
 
+ruta.get("/register", (req, res) => {
+  res.render("register");
+});
+
+ruta.post("/register", (req, res) => {
+  const { mail, password } = req.body;
+  User.findOne({ mail }, async (err, user) => {
+    if (err) {
+      console.log(err)
+      res.render('errorRegistro');
+    };
+    if (user) {
+      res.render('errorRegistro');
+    }
+    if (!user) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({
+        mail,
+        password: hashedPassword,
+      });
+      await newUser.save();
+      res.redirect("/");
+    }
+  });
+
+});
 
 export default ruta;

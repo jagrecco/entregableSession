@@ -5,16 +5,29 @@ import { Server as IOServer } from "socket.io";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
+import mongoose from "mongoose";
+import passport from "passport";
+/* import passport from "passport";
+import { Strategy } from "passport-local";
+const LocalStrategy = Strategy; */
+import User from "./models/User.js";
+import bcrypt from "bcrypt";
 
 import {persiste, leedata} from './utils/util.js'
-
 import ruta from "./routes/index.js";
 
 import { config } from 'dotenv';
 config()
 
 const port = process.env.PORT || 8080
-const mongo= process.env.MONGO
+const mongoSesion= process.env.MONGOSESION
+const mongoUsuario=process.env.MONGOUSER
+
+mongoose
+  .connect(mongoUsuario)
+  .then(() => console.log(`${mongoUsuario} connectada`))
+  .catch((err) => console.log(err));
+
 
 let productos=[]
 let mensajes=[]
@@ -39,15 +52,44 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser());
 app.use(
   session({
-    store: new MongoStore({ mongoUrl: mongo }),
+    store: new MongoStore({ mongoUrl: mongoSesion }),
 
-    secret: "coderhouse",
+    secret: "miPropiaSession",
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: 600000 },
   })
   );
-  
+
+app.use(passport.initialize());
+app.use(passport.session())
+//passport
+/* app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(
+  new LocalStrategy((mail, password, done) => {
+    User.findOne({ mail }, (err, user) => {
+      if (err) console.log(err);
+      if (!user) return done(null, false);
+      bcrypt.compare(password, user.password, (err, isMatch) => {
+        if (err) console.log(err);
+        if (isMatch) return done(null, user);
+        return done(null, false);
+      });
+    });
+  })
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findById(id);
+  done(null, user);
+}); */
+
 app.use("/", ruta)
 
 httpServer.listen(port, () => console.log(`SERVER ON: Puerto ${port}`));
