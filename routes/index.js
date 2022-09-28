@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import info from "../utils/info.js"
 import bcrypt from "bcrypt";
 import passport from "passport";
 import { Strategy } from "passport-local";
@@ -123,4 +124,7 @@ ruta.post("/register", (req, res) => {
 
 });
 
+ruta.get("/info", (req, res)=>{
+  res.send(info)
+})
 export default ruta;

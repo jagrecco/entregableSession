@@ -1,6 +1,7 @@
 import express from 'express'
 import { Server as HttpServer } from "http";
 import { Server as IOServer } from "socket.io";
+import minimist from 'minimist'
 
 import session from "express-session";
 import cookieParser from "cookie-parser";
@@ -19,7 +20,11 @@ import ruta from "./routes/index.js";
 import { config } from 'dotenv';
 config()
 
-const port = process.env.PORT || 8080
+const args= minimist(process.argv.slice(2))
+
+const port = args._[0] || 8080
+
+/* const port = process.env.PORT || 8080 */
 const mongoSesion= process.env.MONGOSESION
 const mongoUsuario=process.env.MONGOUSER
 
@@ -92,7 +97,7 @@ passport.deserializeUser(async (id, done) => {
 
 app.use("/", ruta)
 
-httpServer.listen(port, () => console.log(`SERVER ON: Puerto ${port}`));
+httpServer.listen(port, () => console.log(`SERVER ON: PORT ${port}`));
 
 // Servidor
 io.on("connection", (socket) => {
