@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import info from "../utils/info.js"
 import bcrypt from "bcrypt";
 import passport from "passport";
+import generaObjeto from '../utils/calculo.js'
 import { Strategy } from "passport-local";
 const LocalStrategy = Strategy;
 
@@ -127,4 +128,11 @@ ruta.post("/register", (req, res) => {
 ruta.get("/info", (req, res)=>{
   res.send(info)
 })
+
+ruta.get("/api/random", async (req, res)=>{
+  const resRandom =  generaObjeto(parseInt(req.query.cant))
+  console.log("Listo : " + resRandom)
+  res.send(resRandom)
+})
+
 export default ruta;
