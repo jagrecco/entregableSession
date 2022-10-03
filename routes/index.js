@@ -1,16 +1,35 @@
 import User from "../models/User.js";
-import info from "../utils/info.js"
+/* import info from "../utils/info.js" */
 import bcrypt from "bcrypt";
 import passport from "passport";
-import generaObjeto from '../utils/calculo.js'
+/* import { fork } from 'child_process'; */
+
 import { Strategy } from "passport-local";
 const LocalStrategy = Strategy;
+import express from 'express'
+/* import { Router } from "express"; */
+const ruta = express.Router();
 
-import { Router } from "express";
-const ruta = Router();
-
+import raiz from './raiz.js';
+import info from './info.js';
+import productosTest from './productosTest.js';
+import logout from './logout.js';
+import login from './login.js';
+import product from './productos.js';
+import register from './register.js'
+import apiRandom from './apiRandom.js'
 /* ruta.use(passport.initialize());
 ruta.use(passport.session()); */
+
+ruta.use('/info', info);
+ruta.use("/", raiz);
+ruta.use("/login", login);
+ruta.use("/logout", logout);
+ruta.use('/api/productos-test', productosTest);
+ruta.use('/productos', product);
+ruta.use('/register', register);
+ruta.use('/api/random', apiRandom);
+
 
 passport.use(
   new LocalStrategy((mail, password, done) => {
@@ -51,54 +70,59 @@ mongoose
 
 
 
-import {persiste, leedata} from '../utils/util.js'
-const productos=leedata('./data/prod2.json')
-import prodsFake from "../utils/productosFake.js";
+/* import {persiste, leedata} from '../utils/util.js'
+const productos=leedata('./data/prod2.json') */
+/* import prodsFake from "../utils/productosFake.js"; */
 
 
-ruta.post("/login", passport.authenticate("local", { failureRedirect: "index.html" }), (req, res) => {
+
+/* ruta.get("/", (req, res) => {
+  
+  res.render('index.html', {productos});
+
+}); */
+
+/* ruta.post("/login", passport.authenticate("local", { failureRedirect: "index.html" }), (req, res) => {
   
   const { mail, password } = req.body;
     
   req.session.user = mail;
   res.redirect('/productos')
   
-});
+}); */
 
-ruta.get("/logout", (req, res) => {
+
+/* ruta.get("/logout", (req, res) => {
   const usuario=req.session.user
   req.session.destroy((err) => {
     if (!err) res.render('logout', {usuario})
     else res.send("Error");
   });
-});
+}); */
 
-ruta.get("/", (req, res) => {
-  
-  res.render('index.html', {productos});
 
-});
+/* ruta.get('/productos', (req, res) => {
 
-ruta.get('/productos', (req, res) => {
   const usuario=req.session.user
   
   if (!usuario) {return res.redirect('/')}
   res.render('index', {productos, usuario});
 
-})
+}) */
 
-ruta.get('/api/productos-test', (req, res)=>{
+/* ruta.get('/api/productos-test', (req, res)=>{
   
   res.render('tablaFake', {prodsFake})
   
-})
+}) */
 
-ruta.post('/productos', (req, res) => {
+/* ruta.post('/productos', (req, res) => {
+  
   productos.push(req.body)
 
-})
+}) */
 
-ruta.get("/register", (req, res) => {
+/* ruta.get("/register", (req, res) => {
   res.render("register");
 });
 
@@ -123,16 +147,26 @@ ruta.post("/register", (req, res) => {
     }
   });
 
-});
+}); */
 
-ruta.get("/info", (req, res)=>{
+/* ruta.get("/info", (req, res)=>{
   res.send(info)
-})
+}) */
 
-ruta.get("/api/random", async (req, res)=>{
-  const resRandom =  generaObjeto(parseInt(req.query.cant))
-  console.log("Listo : " + resRandom)
-  res.send(resRandom)
-})
+/* ruta.get("/api/random", (req, res)=>{
 
+  const forked = fork('./utils/calculoForked.js')
+  const cantidad=parseInt(req.query.cant)
+
+  forked.on('message', msg => {
+     if (msg == 'listo') {
+         forked.send(cantidad)
+     } else {
+         
+         res.send(JSON.parse(msg))
+     }
+  })
+
+})
+ */
 export default ruta;

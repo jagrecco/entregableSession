@@ -7,12 +7,14 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
 import mongoose from "mongoose";
+
 import passport from "passport";
 /* import passport from "passport";
 import { Strategy } from "passport-local";
-const LocalStrategy = Strategy; */
+const LocalStrategy = Strategy;
+
 import User from "./models/User.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcrypt"; */
 
 import {persiste, leedata} from './utils/util.js'
 import ruta from "./routes/index.js";
@@ -32,7 +34,6 @@ mongoose
   .connect(mongoUsuario)
   .then(() => console.log(`${mongoUsuario} connectada`))
   .catch((err) => console.log(err));
-
 
 let productos=[]
 let mensajes=[]
@@ -66,22 +67,20 @@ app.use(
   })
   );
 
-app.use(passport.initialize());
-app.use(passport.session())
-//passport
-/* app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use(
-  new LocalStrategy((mail, password, done) => {
-    User.findOne({ mail }, (err, user) => {
-      if (err) console.log(err);
-      if (!user) return done(null, false);
-      bcrypt.compare(password, user.password, (err, isMatch) => {
+  //passport
+  /* app.use(passport.initialize());
+  app.use(passport.session());*/
+  
+/* passport.use(
+    new LocalStrategy((mail, password, done) => {
+      User.findOne({ mail }, (err, user) => {
         if (err) console.log(err);
-        if (isMatch) return done(null, user);
-        return done(null, false);
-      });
+        if (!user) return done(null, false);
+        bcrypt.compare(password, user.password, (err, isMatch) => {
+          if (err) console.log(err);
+          if (isMatch) return done(null, user);
+          return done(null, false);
+        });
     });
   })
 );
@@ -94,6 +93,9 @@ passport.deserializeUser(async (id, done) => {
   const user = await User.findById(id);
   done(null, user);
 }); */
+
+app.use(passport.initialize());
+app.use(passport.session())
 
 app.use("/", ruta)
 
