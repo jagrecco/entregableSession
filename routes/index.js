@@ -1,7 +1,7 @@
-import User from "../models/User.js";
+//import User from "../models/User.js";
 /* import info from "../utils/info.js" */
-import bcrypt from "bcrypt";
-import passport from "passport";
+//import bcrypt from "bcrypt";
+//import passport from "passport";
 /* import { fork } from 'child_process'; */
 
 import { Strategy } from "passport-local";
@@ -31,7 +31,7 @@ ruta.use('/register', register);
 ruta.use('/api/random', apiRandom);
 
 
-passport.use(
+/* passport.use(
   new LocalStrategy((mail, password, done) => {
     User.findOne({ mail }, (err, mail) => {
       if (err) console.log(err);
@@ -56,7 +56,7 @@ passport.deserializeUser(async (id, done) => {
   const user = await User.findById(id);
   done(null, user);
 });
-
+ */
 /* import mongoose from "mongoose"; */
 
 /* import { config } from 'dotenv';

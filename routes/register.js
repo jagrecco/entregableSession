@@ -26,12 +26,15 @@ register.post('/', (req, res)=>{
     }
     
     if (!user) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({
+      const newUser = new User({ username, email, password });
+      const hashedPassword= await newUser.encryptPassword(password);
+      newUser.password=hashedPassword;
+      //const hashedPassword = await bcrypt.hash(password, 10);
+      /* const newUser = new User({
         username,
         email,
         password: hashedPassword,
-      });
+      }); */
       await newUser.save();
       res.redirect("/");
     }

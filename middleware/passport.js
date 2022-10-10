@@ -1,36 +1,38 @@
 import passport from "passport";
-import { Strategy } from "passport-local";
-const LocalStrategy = Strategy;
+import { Strategy as LocalStrategy } from "passport-local";
 
-import User from "../models/user.js";
+import Usuario from "../models/user.js";
 import bcrypt from "bcrypt";
 
-
-passport.use(
-  new LocalStrategy({usernameField: 'email'}, (username, password, done) => {
+passport.use(new LocalStrategy(
+  {
+    usernameField: "email",
+  },
+  async (email, password, done) => {
     
-    console.log(usernameField)
+    const user = await Usuario.findOne({ email: email });
 
-    User.findOne({ email: username }, (err, user) => {
+    if (!user) {
+      return done(null, false, { message: "Not User found." });
+    }
+
+    bcrypt.compare(password, user.password, (err, isMatch) => {
       if (err) console.log(err);
-      if (!user) return done(null, false);
-      bcrypt.compare(password, user.password, (err, isMatch) => {
-        if (err) console.log(err);
-        if (isMatch) return done(null, user);
-        return done(null, false);
-      });
+      if (isMatch) return done(null, user);
+      return done(null, false);
     });
+
   })
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user._id);
+  done(null, user.id);
 });
 
-passport.deserializeUser(async (id, done) => {
-  const user = await User.findById(id);  
-  return done(null, user);
+passport.deserializeUser((id, done) => {
+  Usuario.findById(id, (err, user) => {
+    done(err, user);
+  });
 });
 
-
-export default passport;
+/* export default passport; */
