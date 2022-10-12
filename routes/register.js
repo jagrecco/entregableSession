@@ -2,7 +2,7 @@ import { Router } from "express";
 const register = Router();
 
 import User from "../models/User.js";
-import bcrypt from "bcrypt";
+/* import bcrypt from "bcrypt"; */
 
 
 register.get('/', (req, res)=>{
@@ -29,12 +29,7 @@ register.post('/', (req, res)=>{
       const newUser = new User({ username, email, password });
       const hashedPassword= await newUser.encryptPassword(password);
       newUser.password=hashedPassword;
-      //const hashedPassword = await bcrypt.hash(password, 10);
-      /* const newUser = new User({
-        username,
-        email,
-        password: hashedPassword,
-      }); */
+      
       await newUser.save();
       res.redirect("/");
     }

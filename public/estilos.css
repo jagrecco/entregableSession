@@ -58,6 +58,10 @@ img{
     text-decoration: none;
     margin: 0 0 10px;
 }
+.abandonar{
+    color:red;
+    font-weight: bold;
+}
 
 .logout_container{
     margin-top: 50px;

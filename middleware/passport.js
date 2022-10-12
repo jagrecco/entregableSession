@@ -13,14 +13,14 @@ passport.use(new LocalStrategy(
     const user = await Usuario.findOne({ email: email });
 
     if (!user) {
-      return done(null, false, { message: "Not User found." });
+      return done(null, false);
     }
 
-    bcrypt.compare(password, user.password, (err, isMatch) => {
-      if (err) console.log(err);
-      if (isMatch) return done(null, user);
-      return done(null, false);
-    });
+    const isMatch = await user.matchPassword(password);
+      if (!isMatch)
+        return done(null, false);
+
+      return done(null, user);
 
   })
 );
