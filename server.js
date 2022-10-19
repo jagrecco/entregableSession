@@ -1,5 +1,5 @@
 import express from 'express';
-import morgan from 'morgan';
+/* import morgan from 'morgan'; */
 import { Server as HttpServer } from "http";
 import { Server as IOServer } from "socket.io";
 import minimist from 'minimist';
@@ -8,8 +8,9 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
 import mongoose from "mongoose";
-
 import passport from "passport";
+import compression from "compression";
+import logger from "./loggers/logger.js";
 
 import ruta from "./routes/index.js";
 
@@ -29,7 +30,13 @@ const mongoUsuario=process.env.MONGOUSER
 
 mongoose
   .connect(mongoUsuario)
-  .then(() => console.log(`${mongoUsuario} connectada`))
+  .then(() => {
+    try {
+      logger.info(`${mongoUsuario} connectada`)
+    } catch (error) {
+      logger.error(`Erro al conectar con ${mongoUsuario}:  ${error}`)
+    }
+  })
   .catch((err) => console.log(err));
 
 let productos=[]
@@ -48,7 +55,8 @@ app.set('view engine', 'ejs');
 app.set('json spaces', 2)
 
 //middleware
-app.use(morgan("dev"));
+app.use(compression());
+/* app.use(morgan("dev")); */
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("./public"));
 app.use(
@@ -71,7 +79,15 @@ app.use(cookieParser());
 //rutas
 app.use("/", ruta)
 
-httpServer.listen(port, () => console.log(`SERVER ON: PORT ${port}`));
+
+httpServer.listen(port, (error) => {
+  try {
+    logger.info(`SERVER ON: PORT ${port}`)
+    
+  } catch (error) {
+    logger.error(`ERROR AL INTENTAR LEVANTAR SERVER ON: PORT ${port}:  ${error} `)
+  }
+});
 
 // Servidor socket
 io.on("connection", (socket) => {
