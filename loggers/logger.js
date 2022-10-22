@@ -1,13 +1,16 @@
-import {createLogger, format, transports} from 'winston';
+/* import {createLogger, format, transports} from 'winston'; */
+import winston from 'winston';
 
-export default createLogger({
-    format: format.combine(format.simple(),
-    format.timestamp(),
-    format.printf(info=>`[${info.timestamp}  Level: ${info.level}  ${info.message}]`)
+const logger = winston.createLogger({
+    format: winston.format.combine(winston.format.simple(),
+    winston.format.timestamp(),
+    winston.format.printf(info=>`[${info.timestamp}  Level: ${info.level}  ${info.message}]`)
     ),
     transports:[
-        new transports.File({ filename: `../logs/warn.log`, level: "warn" }),
-        new transports.File({ filename: `../logs/error.log`, level: "error" }),
-        new transports.Console({level: `info`}),
+        new winston.transports.File({ filename: "./logs/warn.log", level: "warn" }),
+        new winston.transports.File({ filename: "./logs/error.log", level: "error" }),
+        new winston.transports.Console({level: "info"}),
     ]
 })
+
+export default logger;
