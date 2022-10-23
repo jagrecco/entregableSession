@@ -1,7 +1,5 @@
 import { fork } from 'child_process';
 
-//const cantidad=10000 // /randoms?cant=20000
-
 const generaObjeto = function (cantidad){
 
     const forked = fork('./utils/calculoForked.js')

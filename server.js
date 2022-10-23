@@ -1,5 +1,4 @@
 import express from 'express';
-/* import morgan from 'morgan'; */
 import { Server as HttpServer } from "http";
 import { Server as IOServer } from "socket.io";
 import minimist from 'minimist';
@@ -56,7 +55,6 @@ app.set('json spaces', 2)
 
 //middleware
 app.use(compression());
-/* app.use(morgan("dev")); */
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("./public"));
 app.use(
@@ -65,7 +63,7 @@ app.use(
     secret: "miPropiaSession",
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 6000 },
+    cookie: { maxAge: 600000 },
   })
 );
 
@@ -83,7 +81,6 @@ app.use("/", ruta)
 httpServer.listen(port, (error) => {
   try {
     logger.info(`SERVER ON: PORT ${port}`)
-    
   } catch (error) {
     logger.error(`ERROR AL INTENTAR LEVANTAR SERVER ON: PORT ${port}:  ${error} `)
   }
@@ -92,19 +89,27 @@ httpServer.listen(port, (error) => {
 // Servidor socket
 io.on("connection", (socket) => {
 
-  console.log("¡Nuevo cliente conectado!");
+  logger.info(`¡Nuevo cliente conectado!`)
   socket.emit("mensajes", mensajes);
   socket.emit("productos", productos);
 
   socket.on("mensaje", (data) => {
-    mensajes.push(data)
-    persiste('./data/mensajes.json', mensajes)
-    io.sockets.emit("mensajes", mensajes);
+    try {
+      mensajes.push(data)
+      persiste('./data/mensajes.json', mensajes)
+      io.sockets.emit("mensajes", mensajes);
+    } catch (error) {
+      logger.error(`ERROR AL INTENTAR ENVIAR CHAT: ${data}:  ${error} `)
+    }
   });
 
   socket.on("producto", (prod) => {
-    productos.push(prod)
-    io.sockets.emit("productos", productos);
+    try {
+      productos.push(prod)
+      io.sockets.emit("productos", productos);
+    } catch (error) {
+      logger.error(`ERROR AL INTENTAR ENVIAR PRODUCTO: ${prod}:  ${error} `)
+    }
 
   });
 

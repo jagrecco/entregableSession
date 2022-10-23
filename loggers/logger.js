@@ -1,8 +1,8 @@
-/* import {createLogger, format, transports} from 'winston'; */
 import winston from 'winston';
 
 const logger = winston.createLogger({
     format: winston.format.combine(winston.format.simple(),
+    winston.format.colorize(),
     winston.format.timestamp(),
     winston.format.printf(info=>`[${info.timestamp}  Level: ${info.level}  ${info.message}]`)
     ),

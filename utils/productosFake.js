@@ -1,3 +1,4 @@
+import logger from "../loggers/logger.js";
 import { faker as _faker } from '@faker-js/faker/locale/es_MX'
 
 const prodsFake=[]
@@ -12,7 +13,11 @@ const prods = function(){
 }
 
 for (let i=0; i<5; i++){
-    prodsFake.push(prods())
+    try {
+        prodsFake.push(prods())
+    } catch (error) {
+        logger.error(`ERROR AL INTENTAR CREAR LISTA DE PRODUCTOS:  ${error} `)
+    }
 }
 
 export default prodsFake;
