@@ -17,3 +17,4 @@
 [2022-10-23T00:25:46.513Z  Level: warn  Método: GET Ruta inexistente: /public/estilos.css]
 [2022-10-23T00:48:24.836Z  Level: [33mwarn[39m  Método: GET Ruta inexistente: /api/public/estilos.css]
 [2022-10-23T00:50:22.297Z  Level: [31merror[39m  Problemas al acceder al archivo ./data/mensajes.json Error: ENOENT: no such file or directory, open 'C:\Users\jag\Desktop\Coder\Backend\entregableLogin\data\mensajes.json']
+[2022-10-24T21:51:50.782Z  Level: [33mwarn[39m  Método: GET Ruta inexistente: /favicon.ico]

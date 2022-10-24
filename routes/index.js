@@ -9,7 +9,7 @@ import login from './login.js';
 import product from './productos.js';
 import register from './register.js'
 import apiRandom from './apiRandom.js'
-import log from './log.js'
+import log from '../utils/log.js'
 
 
 ruta.use((req,res, next)=>{
